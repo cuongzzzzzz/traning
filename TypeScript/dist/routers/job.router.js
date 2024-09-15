@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const job_controller_1 = require("../controllers/job.controller");
+const utils_1 = require("../utils");
+const router = (0, express_1.Router)();
+router.get("/jobs", (0, utils_1.asyncHandler)(job_controller_1.JobController.getAll));
+router.get("/jobs/:id", (0, utils_1.asyncHandler)(job_controller_1.JobController.getOne));
+router.post("/jobs", (0, utils_1.asyncHandler)(job_controller_1.JobController.add));
+router.patch("/jobs/:id", (0, utils_1.asyncHandler)(job_controller_1.JobController.update));
+router.delete("/jobs/:id", (0, utils_1.asyncHandler)(job_controller_1.JobController.delete));
+exports.default = router;

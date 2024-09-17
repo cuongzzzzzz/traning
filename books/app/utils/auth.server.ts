@@ -73,7 +73,7 @@ const logout = async (req:Request)=>{
 }
 
 const login = async ({email, password}:{email: string, password : string})=>{
-    return 
+    return redirect("/")
 }
 
 export {login,logout,register,getUser,getUserId,getUserSession}

@@ -8,11 +8,11 @@ type Props = {}
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
     const allBooks = await getAllBooks()
-    return json({ allBooks })
+    return json({ allBooks,baseUrl:`${request.url.split("/")[0]}//${request.url.split("/")[2]}`  })
 }
 
 const Index = (props: Props) => {
-    const { allBooks } = useLoaderData<typeof loader>()
+    const { allBooks,baseUrl } = useLoaderData<typeof loader>()
 
 
     return (
@@ -67,7 +67,7 @@ const Index = (props: Props) => {
                                 {book.title}
                             </th>
                             <td className="px-6 py-4">{book.desc}</td>
-                            <td className="px-6 py-4"> <img className='w-[150px]' src={book?.cover || ""} /></td>
+                            <td className="px-6 py-4"> <img className='w-[150px]' src={`${baseUrl}/${book?.cover }`|| ""} /></td>
                             <td className="px-6 py-4">${book.price}</td>
                             <td className="px-6 py-4">{book.stock}</td>
                             <td className="px-6 py-4 text-right">

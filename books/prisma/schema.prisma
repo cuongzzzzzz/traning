@@ -30,10 +30,10 @@ model Book {
   desc       String
   publisher  String
   author     String
-  page       Int?
+  page       Int
   price      Int
   stock      Int
-  cover      String?
+  cover      String
   createdAt  DateTime       @default(now())
   updatedAt  DateTime       @updatedAt
   categories BookCategory[]

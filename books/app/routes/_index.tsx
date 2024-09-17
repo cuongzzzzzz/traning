@@ -1,4 +1,4 @@
-import type { MetaFunction } from "@remix-run/node";
+import { redirect, type LoaderFunctionArgs, type MetaFunction } from "@remix-run/node";
 
 export const meta: MetaFunction = () => {
   return [
@@ -6,7 +6,9 @@ export const meta: MetaFunction = () => {
     { name: "description", content: "Welcome to Remix!" },
   ];
 };
-
+export const loader = async ({request}:LoaderFunctionArgs)=>{
+  return redirect("/books/list")
+}
 export default function Index() {
   return (
     <div className="flex h-screen items-center justify-center">

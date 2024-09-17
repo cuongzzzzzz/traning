@@ -20,7 +20,12 @@ export const action: ActionFunction = async ({ request }) => {
     const price = formData.get("price")
     const stock = formData.get("stock")
     const page = formData.get("page")
-    const file = formData.get("cover")
+
+    const file :any= formData.get("cover")
+
+
+    let errors: { [key: string]: string } = {}
+     
 
     try {
         bookSchema.parse({
@@ -35,26 +40,30 @@ export const action: ActionFunction = async ({ request }) => {
 
     } catch (error: any) {
         console.log(error)
-        const errors: { [key: string]: string } = {}
         error.issues.map((issue: any) => {
             const name = issue.path[0]
             errors[name] = issue.message
         })
-        return json({
-            errors,
-            fields: {
-                title, desc, publisher, author, price, stock
-            }
-        }, { status: 400 })
+        
     }
     try {
-        if (!file || typeof file === "string") {
-            return json({ error: "No file uploaded" }, { status: 400 });
+        if (!file.size|| typeof file === "string") {
+            errors["cover"] = "Không có file được tải lên"
         }
-        console.log(file)
-        const { name } = await upload(file)
-        console.log(name)
+        console.log(typeof file)
 
+        console.log(errors)
+
+        if(Object.keys(errors).length >0){
+            return json({
+                errors,
+                fields: {
+                    title, desc, publisher, author, price, stock
+                }
+            }, { status: 400 })
+        }
+        const { name } = await upload(file)
+       
         const newBook = await createBook({
             title,
             desc,
@@ -66,16 +75,7 @@ export const action: ActionFunction = async ({ request }) => {
             cover: name ? `uploads/${name}` : ""
         } as ICreateBook)
 
-        console.log({
-            title,
-            desc,
-            publisher,
-            author,
-            price: Number(price),
-            stock: Number(stock),
-            page: page ? Number(page) : "",
-            cover: name ? `uploads/${name}` : ""
-        })
+        
         if (!newBook) {
             return json({
                 message: "SOmething went wrong!",
@@ -95,29 +95,29 @@ export const action: ActionFunction = async ({ request }) => {
     }
 }
 
-interface FormData {
-    title: string;
-    desc: string;
-    publisher: string;
-    author: string;
-    price: string;
-    stock: string;
-    page: string;
-    cover: File | null;
-  }
+// interface FormData {
+//     title: string;
+//     desc: string;
+//     publisher: string;
+//     author: string;
+//     price: string;
+//     stock: string;
+//     page: string;
+//     cover: File | null;
+//   }
   
   // Hàm xác thực form ở client
-  const validateForm = (data: FormData) => {
-    const errors: Partial<Record<keyof FormData, string>> = {};
-    if (!data.title.trim()) errors.title = "Title is required";
-    if (!data.desc.trim()) errors.desc = "Description is required";
-    if (!data.publisher.trim()) errors.publisher = "Publisher is required";
-    if (!data.author.trim()) errors.author = "Author is required";
-    if (!data.price || isNaN(Number(data.price))) errors.price = "Price must be a valid number";
-    if (!data.stock || isNaN(Number(data.stock))) errors.stock = "Stock must be a valid number";
-    if (data.page && isNaN(Number(data.page))) errors.page = "Page must be a valid number";
-    return errors;
-  };
+//   const validateForm = (data: FormData) => {
+//     const errors: Partial<Record<keyof FormData, string>> = {};
+//     if (!data.title.trim()) errors.title = "Title is required";
+//     if (!data.desc.trim()) errors.desc = "Description is required";
+//     if (!data.publisher.trim()) errors.publisher = "Publisher is required";
+//     if (!data.author.trim()) errors.author = "Author is required";
+//     if (!data.price || isNaN(Number(data.price))) errors.price = "Price must be a valid number";
+//     if (!data.stock || isNaN(Number(data.stock))) errors.stock = "Stock must be a valid number";
+//     if (data.page && isNaN(Number(data.page))) errors.page = "Page must be a valid number";
+//     return errors;
+//   };
 
 export default function Add() {
     const actionData = useActionData<typeof action>()
@@ -130,7 +130,6 @@ export default function Add() {
         price: actionData?.fields?.price || "",
         stock: actionData?.fields?.stock || "",
         page: actionData?.fields?.page || "",
-        cover: actionData?.fields?.cover || "",
     })
 
     useEffect(() => {
@@ -156,7 +155,7 @@ export default function Add() {
         console.log("rerender")
     },[])
     return (
-        <Form method='POST' encType="multipart/form-data">
+        <Form method='POST' encType="multipart/form-data" className='py-5'>
             <FormInputField
                 label='title'
                 htmlFor='title'
@@ -221,6 +220,8 @@ export default function Add() {
                 htmlFor='cover'
                 type='file'
                 error={errors?.cover}
+                onChange={handleInputChange}
+
             />
             <Button type='submit' value='add'>Add</Button>
         </Form>

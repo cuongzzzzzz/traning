@@ -11,25 +11,13 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     return json({ allBooks })
 }
 
-export const action = async ({ request }: ActionFunctionArgs) => {
-    const formData = await request.formData()
-    const id = formData.get("id")
-    if (!id) json({ error: "Missing Id" })
-    try {
-        await deleteOne(Number(id))
-        return { message: "Delete successfully" }
-    } catch (error) {
-        return json(error)
-    }
-}
-
 const Index = (props: Props) => {
-    const navigate = useNavigate()
     const { allBooks } = useLoaderData<typeof loader>()
 
 
     return (
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <Link to={"/books/add"}><Button children="add" value='' type='button'/></Link>
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
@@ -87,19 +75,14 @@ const Index = (props: Props) => {
                                     <Link to={`/books/edit/${book.id}`}>
                                         <Button children="Edit" value='' type='button' variant="default" />
                                     </Link>
-                                    <Form method="POST"
-                                        onSubmit={(event) => {
-                                            const response = confirm(
-                                                "Please confirm you want to delete this record."
-                                            );
-                                            if (!response) {
-                                                event.preventDefault();
-                                            }
+                                    <form method="POST" action='destroy'
+                                        onSubmit={(e) => {
+                                            return !confirm("Are you sure?") ? e.preventDefault() : true
                                         }}>
 
                                         <input type="text" name='id' hidden value={book.id} onChange={() => { }} />
                                         <Button children="delete" value='' variant={"red"} type='submit' />
-                                    </Form>
+                                    </form>
                                 </div>
                             </td>
                         </tr>

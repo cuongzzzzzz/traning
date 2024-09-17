@@ -3,7 +3,7 @@ services:
     image: postgres:latest
     container_name: postgres
     environment:
-      POSTGRES_USER: postgres
+      POSTGRES_USER: admin
       POSTGRES_PASSWORD: 123456
       POSTGRES_DB: remix
     ports:

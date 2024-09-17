@@ -34,6 +34,7 @@ export const action: ActionFunction = async ({ request }) => {
         })
 
     } catch (error: any) {
+        console.log(error)
         const errors: { [key: string]: string } = {}
         error.issues.map((issue: any) => {
             const name = issue.path[0]

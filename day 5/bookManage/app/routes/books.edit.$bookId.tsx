@@ -3,11 +3,11 @@ import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import React, { useEffect, useState } from 'react'
 import Button from '~/components/Button'
 import FormInputField from '~/components/FormInputField'
-import { bookEditSchema } from "app/utils/validate.server"
 import { json } from "@remix-run/node"
 import { getOneBook, updateBook } from '~/utils/book.server'
 import { Book } from '@prisma/client'
 import { upload } from '~/utils/upload.server'
+import { bookEditSchema } from '~/utils/validate.server'
 
 type Props = {}
 
@@ -68,7 +68,7 @@ export const action: ActionFunction = async ({ request, params }: ActionFunction
             price: Number(price),
             stock: Number(stock),
             page: Number(page),
-            cover: `uploads/${name}`
+            cover: name ? `uploads/${name}` :""
         } as Partial<Book>)
         return redirect("/")
         // return {}
